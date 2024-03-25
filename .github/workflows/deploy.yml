@@ -34,8 +34,11 @@ jobs:
     - run: echo ${{ inputs.some-input }}
 
     - run: echo ${{ vars.whatever_locally }}
+    - run: echo ${{ secrets.whatever_locally }}
 
     - run: echo ${{ vars.whatever_other_action }}
+
+    - run: echo ${{ secrets.secret_secret }}
 
     - run: |
         cat << EOF 
@@ -51,6 +54,7 @@ jobs:
     - run: echo ${{ env.something_else }}
 
     - run: echo ${{ vars.whatever_locally }}
+    - run: echo ${{ secrets.whatever_locally }}
 
     - run: echo ${{ vars.whatever_other_action }}
 
