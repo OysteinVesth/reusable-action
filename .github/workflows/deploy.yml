@@ -36,6 +36,8 @@ jobs:
     - run: echo ${{ vars.whatever_locally }}
 
     - run: echo ${{ vars.whatever_other_action }}
+
+    - run: echo ${{ toJson(vars) }}
   dev:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
