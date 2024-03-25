@@ -37,7 +37,10 @@ jobs:
 
     - run: echo ${{ vars.whatever_other_action }}
 
-    - run: echo ${{ toJson(vars) }}
+    - run: |
+        cat << EOF 
+        ${{ toJson(vars) }}
+        EOF
   dev:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
@@ -50,15 +53,8 @@ jobs:
     - run: echo ${{ vars.whatever_locally }}
 
     - run: echo ${{ vars.whatever_other_action }}
-  prod:
-    runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
-    steps:
-    - run: echo ${{ inputs.some-input }}
 
-    - run: echo ${{ env.something }}
-    - run: echo ${{ env.something_else }}
-
-    - run: echo ${{ vars.whatever_locally }}
-
-    - run: echo ${{ vars.whatever_other_action }}
+    - run: |
+        cat << EOF 
+        ${{ toJson(vars) }}
+        EOF
