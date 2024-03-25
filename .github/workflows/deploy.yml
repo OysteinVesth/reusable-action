@@ -1,5 +1,8 @@
 name: Reusable workflow example
 
+env:
+    something: This is from reusable-action
+
 on:
   workflow_call:
     inputs:
@@ -25,6 +28,9 @@ jobs:
 
     - run: echo "No environment"
 
+    - run: echo ${{ env.something }}
+    - run: echo ${{ env.something_else }}
+
     - run: echo ${{ inputs.some-input }}
 
     - run: echo ${{ vars.whatever_locally }}
@@ -36,6 +42,9 @@ jobs:
     steps:
     - run: echo ${{ inputs.some-input }}
 
+    - run: echo ${{ env.something }}
+    - run: echo ${{ env.something_else }}
+
     - run: echo ${{ vars.whatever_locally }}
 
     - run: echo ${{ vars.whatever_other_action }}
@@ -44,6 +53,9 @@ jobs:
     environment: ${{ inputs.environment }}
     steps:
     - run: echo ${{ inputs.some-input }}
+
+    - run: echo ${{ env.something }}
+    - run: echo ${{ env.something_else }}
 
     - run: echo ${{ vars.whatever_locally }}
 
