@@ -35,6 +35,7 @@ jobs:
 
     - run: echo ${{ vars.whatever_locally }}
     - run: echo ${{ secrets.whatever_locally }}
+    - run: echo ${{ secrets.token }}
 
     - run: echo ${{ vars.whatever_other_action }}
 
@@ -55,6 +56,7 @@ jobs:
 
     - run: echo ${{ vars.whatever_locally }}
     - run: echo ${{ secrets.whatever_locally }}
+    - run: echo ${{ secrets.token }}
 
     - run: echo ${{ vars.whatever_other_action }}
 
