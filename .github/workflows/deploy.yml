@@ -63,7 +63,7 @@ jobs:
             if (res?.data?.protection_rules?.some(rule => rule.type === 'required_reviewers')) {
                 console.log('✅ Production environment has required reviewers protection rule')
             } else {
-                core.error('Production environment does not have required reviewerrs protection rule set')
+                core.setFailed('Production environment does not have required reviewerrs protection rule set')
             }
       - run: echo ${{ inputs.some-input }}
       - run: echo ${{ env.something }}
