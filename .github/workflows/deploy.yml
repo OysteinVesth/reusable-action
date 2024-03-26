@@ -45,6 +45,35 @@ jobs:
           cat << EOF 
           ${{ toJson(vars) }}
           EOF
+  dev:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/github-script@v7
+        if: inputs.environment == 'prod'
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        with:
+          script: |
+            const res = await github.rest.repos.getEnvironment({
+              repo: context.repo.repo,
+              owner: context.repo.owner,
+              environment_name: process.env.ENVIRONMENT
+            })
+            if (res?.data?.protection_rules?.some(rule => rule.type === 'required_reviewers')) {
+                console.log('✅ Production environment has required reviewers protection rule')
+            } else {
+                core.setFailed('Production environment must have required reviewers protection rule')
+            }
+      - run: echo ${{ inputs.some-input }}
+      - run: echo ${{ env.something }}
+      - run: echo ${{ env.something_else }}
+
+      - run: echo ${{ vars.whatever_locally }}
+      - run: echo ${{ secrets.whatever_locally }}
+      - run: echo ${{ secrets.token }}
+
+      - run: echo ${{ vars.whatever_other_action }}
 
       - uses: actions/github-script@v7
         if: inputs.environment == 'prod'
@@ -77,35 +106,6 @@ jobs:
                 core.exportVariable(key, value)
             }
 
-  dev:
-    runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
-    steps:
-      - uses: actions/github-script@v7
-        if: inputs.environment == 'prod'
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
-        with:
-          script: |
-            const res = await github.rest.repos.getEnvironment({
-              repo: context.repo.repo,
-              owner: context.repo.owner,
-              environment_name: process.env.ENVIRONMENT
-            })
-            if (res?.data?.protection_rules?.some(rule => rule.type === 'required_reviewers')) {
-                console.log('✅ Production environment has required reviewers protection rule')
-            } else {
-                core.setFailed('Production environment must have required reviewers protection rule')
-            }
-      - run: echo ${{ inputs.some-input }}
-      - run: echo ${{ env.something }}
-      - run: echo ${{ env.something_else }}
-
-      - run: echo ${{ vars.whatever_locally }}
-      - run: echo ${{ secrets.whatever_locally }}
-      - run: echo ${{ secrets.token }}
-
-      - run: echo ${{ vars.whatever_other_action }}
 
       - run: |
           cat << EOF 
