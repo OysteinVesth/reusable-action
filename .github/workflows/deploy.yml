@@ -45,6 +45,40 @@ jobs:
           cat << EOF 
           ${{ toJson(vars) }}
           EOF
+
+      - uses: actions/github-script@v7
+        if: inputs.environment == 'prod'
+        env:
+          deployment_variables: ${{ toJson(vars) }}
+          deployment_secrets: ${{ toJson(secrets) }}
+          prefix: ''
+        with:
+          script: |
+            const allVars = JSON.parse(process.env.deployment_variables)
+            const allSecrets = JSON.parse(process.env.deployment_secrets)
+            const prefix = process.env.prefix
+            const varPrefix = `${prefix}TFSO_`
+            const secretPrefix = `${prefix}TFSO_SECRET`
+
+            const vars = Object.keys(allVars)
+                .filter(key => key.startsWith(varPrefix) && !key.startsWith(secretPrefix))
+                .map(key => ({
+                    key: key,
+                    value: allVars[key]
+                }))
+            const secrets = Object.keys(allSecrets)
+                .filter(key => key.startsWith(secretPrefix))
+                .map(key => ({
+                    key: key,
+                    value: allSecrets[key]
+                }))
+
+            for (const { key, value } of [...vars, ...secrets]) {
+                core.exportVariable(key, value)
+            }
+
+
+
   dev:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
@@ -63,7 +97,7 @@ jobs:
             if (res?.data?.protection_rules?.some(rule => rule.type === 'required_reviewers')) {
                 console.log('✅ Production environment has required reviewers protection rule')
             } else {
-                core.setFailed('Production environment does not have required reviewerrs protection rule set')
+                core.setFailed('Production environment must have required reviewers protection rule')
             }
       - run: echo ${{ inputs.some-input }}
       - run: echo ${{ env.something }}
