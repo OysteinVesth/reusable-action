@@ -1,7 +1,7 @@
 name: Reusable workflow example
 
 env:
-    something: This is from reusable-action
+  something: This is from reusable-action
 
 on:
   workflow_call:
@@ -21,46 +21,57 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/labeler@v4
-      with:
-        repo-token: ${{ secrets.token }}
-        configuration-path: ${{ inputs.some-input }}
+      - uses: actions/labeler@v4
+        with:
+          repo-token: ${{ secrets.token }}
+          configuration-path: ${{ inputs.some-input }}
 
-    - run: echo "No environment"
+      - run: echo "No environment"
 
-    - run: echo ${{ env.something }}
-    - run: echo ${{ env.something_else }}
+      - run: echo ${{ env.something }}
+      - run: echo ${{ env.something_else }}
 
-    - run: echo ${{ inputs.some-input }}
+      - run: echo ${{ inputs.some-input }}
 
-    - run: echo ${{ vars.whatever_locally }}
-    - run: echo ${{ secrets.whatever_locally }}
-    - run: echo ${{ secrets.token }}
+      - run: echo ${{ vars.whatever_locally }}
+      - run: echo ${{ secrets.whatever_locally }}
+      - run: echo ${{ secrets.token }}
 
-    - run: echo ${{ vars.whatever_other_action }}
+      - run: echo ${{ vars.whatever_other_action }}
 
-    - run: echo ${{ secrets.secret_secret }}
+      - run: echo ${{ secrets.secret_secret }}
 
-    - run: |
-        cat << EOF 
-        ${{ toJson(vars) }}
-        EOF
+      - run: |
+          cat << EOF 
+          ${{ toJson(vars) }}
+          EOF
   dev:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
-    - run: echo ${{ inputs.some-input }}
+      - uses: actions/github-script@v7
+        if: inputs.environment == 'prod'
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        with:
+          script: |
+            const env = github.rest.repos.getEnvironment({
+              repo: context.repo.repo,
+              owner: context.repo.owner,
+              environment_name: process.env.ENVIRONMENT
+            })
+            console.log(JSON.stringify(env, undefined, 2))
+      - run: echo ${{ inputs.some-input }}
+      - run: echo ${{ env.something }}
+      - run: echo ${{ env.something_else }}
 
-    - run: echo ${{ env.something }}
-    - run: echo ${{ env.something_else }}
+      - run: echo ${{ vars.whatever_locally }}
+      - run: echo ${{ secrets.whatever_locally }}
+      - run: echo ${{ secrets.token }}
 
-    - run: echo ${{ vars.whatever_locally }}
-    - run: echo ${{ secrets.whatever_locally }}
-    - run: echo ${{ secrets.token }}
+      - run: echo ${{ vars.whatever_other_action }}
 
-    - run: echo ${{ vars.whatever_other_action }}
-
-    - run: |
-        cat << EOF 
-        ${{ toJson(vars) }}
-        EOF
+      - run: |
+          cat << EOF 
+          ${{ toJson(vars) }}
+          EOF
