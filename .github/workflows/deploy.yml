@@ -101,6 +101,9 @@ jobs:
                     value: allSecrets[key]
                 }))
 
+            console.log(vars)
+            console.log(secrets)
+
             for (const { key, value } of [...vars, ...secrets]) {
                 core.exportVariable(key, value)
             }
