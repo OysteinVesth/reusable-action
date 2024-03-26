@@ -76,7 +76,6 @@ jobs:
       - run: echo ${{ vars.whatever_other_action }}
 
       - uses: actions/github-script@v7
-        if: inputs.environment == 'prod'
         env:
           deployment_variables: ${{ toJson(vars) }}
           deployment_secrets: ${{ toJson(secrets) }}
