@@ -55,7 +55,7 @@ jobs:
           ENVIRONMENT: ${{ inputs.environment }}
         with:
           script: |
-            const env = github.rest.repos.getEnvironment({
+            const env = await github.rest.repos.getEnvironment({
               repo: context.repo.repo,
               owner: context.repo.owner,
               environment_name: process.env.ENVIRONMENT
