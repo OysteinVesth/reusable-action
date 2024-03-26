@@ -55,12 +55,17 @@ jobs:
           ENVIRONMENT: ${{ inputs.environment }}
         with:
           script: |
-            const env = await github.rest.repos.getEnvironment({
+            const res = await github.rest.repos.getEnvironment({
               repo: context.repo.repo,
               owner: context.repo.owner,
               environment_name: process.env.ENVIRONMENT
             })
             console.log(JSON.stringify(env, undefined, 2))
+            if (res?.data?.protection_rules?.some(rule => rule.type === 'required_reviewers')) {
+                console.log('✅ Production environment has required reviewers protection rule')
+            } else {
+                core.error('Production environment does not have required reviewerrs protection rule set')
+            }
       - run: echo ${{ inputs.some-input }}
       - run: echo ${{ env.something }}
       - run: echo ${{ env.something_else }}
