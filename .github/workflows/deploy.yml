@@ -83,7 +83,7 @@ jobs:
             const allSecrets = JSON.parse(process.env.deployment_secrets)
             const prefix = process.env.prefix
             const varPrefix = `${prefix}TFSO_`
-            const secretPrefix = `${prefix}TFSO_SECRET`
+            const secretPrefix = `${prefix}TFSO_SECRET_`
 
             const vars = Object.keys(allVars)
                 .filter(key => key.startsWith(varPrefix) && !key.startsWith(secretPrefix))
@@ -98,11 +98,8 @@ jobs:
                     value: allSecrets[key]
                 }))
 
-            console.log(vars)
-            console.log(secrets)
-
             for (const { key, value } of [...vars, ...secrets]) {
-                core.exportVariable(key, value)
+                core.exportVariable(key.replace(prefix, ''), value)
             }
 
 
