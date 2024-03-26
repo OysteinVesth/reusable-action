@@ -60,7 +60,6 @@ jobs:
               owner: context.repo.owner,
               environment_name: process.env.ENVIRONMENT
             })
-            console.log(JSON.stringify(env, undefined, 2))
             if (res?.data?.protection_rules?.some(rule => rule.type === 'required_reviewers')) {
                 console.log('✅ Production environment has required reviewers protection rule')
             } else {
