@@ -77,8 +77,6 @@ jobs:
                 core.exportVariable(key, value)
             }
 
-
-
   dev:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
@@ -112,4 +110,8 @@ jobs:
       - run: |
           cat << EOF 
           ${{ toJson(vars) }}
+          EOF
+      - run: |
+          cat << EOF 
+          ${{ toJson(env) }}
           EOF
